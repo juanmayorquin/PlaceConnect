@@ -97,7 +97,7 @@ export const requestPasswordReset = async (req: Request, res: Response) => {
   const link = `${CLIENT_URL}/reset-password/${user.resetToken}`;
   await sendEmail(
     email,
-    "Reset Password",
+    "Reestablece tu contraseña",
     `<a href="${link}">Restablece tu contraseña</a>`
   );
 
