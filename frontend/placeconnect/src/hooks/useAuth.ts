@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export interface AuthUser { id: string; email: string; role: 'owner' | 'renter' }
+export interface AuthUser { id: string; email: string; role: 'Propietario' | 'Interesado' }
 
 export const useAuth = () => {
   const [user, setUser] = useState<AuthUser | null>(null);
