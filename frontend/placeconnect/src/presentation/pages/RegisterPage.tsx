@@ -35,6 +35,7 @@ const RegisterPage: React.FC = () => {
   const [step, setStep] = useState(0);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
   const nav = useNavigate();
 
   const {
@@ -57,6 +58,7 @@ const RegisterPage: React.FC = () => {
       setError("Las contraseñas no coinciden");
       return;
     }
+    setLoading(true);
     try {
       await register({
         name: data.name,
@@ -64,9 +66,12 @@ const RegisterPage: React.FC = () => {
         role: data.role,
         password: data.password,
       });
+      setLoading(false);
       setSuccess(true);
     } catch (err: any) {
       setError(err.response?.data?.msg || "Error");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -220,18 +225,18 @@ const RegisterPage: React.FC = () => {
               </div>
               <div className="flex justify-between">
                 {step > 0 && (
-                  <Button type="button" variant="secondary" onClick={prevStep}>
+                  <Button type="button" variant="secondary" onClick={prevStep} disabled={loading}>
                     Atrás
                   </Button>
                 )}
                 {step < steps.length - 1 && (
-                  <Button type="submit" variant="primary">
-                    Siguiente
+                  <Button type="submit" variant="primary" disabled={loading}>
+                    {loading ? "Cargando..." : "Siguiente"}
                   </Button>
                 )}
                 {step === steps.length - 1 && (
-                  <Button type="submit" variant="primary">
-                    Crear cuenta
+                  <Button type="submit" variant="primary" disabled={loading}>
+                    {loading ? "Creando cuenta..." : "Crear cuenta"}
                   </Button>
                 )}
               </div>

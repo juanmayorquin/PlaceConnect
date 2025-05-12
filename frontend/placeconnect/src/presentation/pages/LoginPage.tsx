@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { login } from "../../infrastructure/authService";
+import { login as loginAPI } from "../../infrastructure/authService";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Lock, Mail } from "lucide-react";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
+import { useAuth } from "../../hooks/AuthContext";
 
 interface LoginForm {
   email: string;
@@ -20,6 +21,7 @@ const initialForm: LoginForm = {
 const LoginPage: React.FC = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const {login} = useAuth();
   const nav = useNavigate();
 
   const {
@@ -31,11 +33,12 @@ const LoginPage: React.FC = () => {
     mode: "onTouched",
   });
 
-  const onSubmit = async (data: LoginForm) => {
+  const onSubmit = async (loginData: LoginForm) => {
     setError("");
     setLoading(true);
     try {
-      await login({ email: data.email, password: data.password });
+      const {data} = await loginAPI({ email: loginData.email, password: loginData.password });
+      login(data.token, data.user);
       nav("/");
     } catch (err: any) {
       setError(err.response?.data?.msg || "Error al iniciar sesión");
@@ -68,22 +71,33 @@ const LoginPage: React.FC = () => {
               placeholder="you@example.com"
               icon={<Mail className="h-5 w-5 text-slate-400" />}
             />
-            {errors.email && <span className="text-red-500 text-xs">{errors.email.message}</span>}
+            {errors.email && (
+              <span className="text-red-500 text-xs">
+                {errors.email.message}
+              </span>
+            )}
             <Input
               id="password"
-              {...registerInput("password", {
-                required: "La contraseña es obligatoria",
-              })}
+              {...registerInput("password")}
               type="password"
               label="Contraseña"
               placeholder="••••••••"
               icon={<Lock className="h-5 w-5 text-slate-400" />}
             />
-            {errors.password && <span className="text-red-500 text-xs">{errors.password.message}</span>}
+            {errors.password && (
+              <span className="text-red-500 text-xs">
+                {errors.password.message}
+              </span>
+            )}
             {error && <div className="text-red-500 text-sm">{error}</div>}
           </div>
           <div className="flex flex-col gap-2">
-            <Button type="submit" variant="primary" disabled={loading} fullWidth>
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={loading}
+              fullWidth
+            >
               {loading ? "Ingresando..." : "Ingresar"}
             </Button>
             <div className="flex justify-center items-center space-x-2 text-sm mt-2">

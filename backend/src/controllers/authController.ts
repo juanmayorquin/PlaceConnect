@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/User";
 import { sendEmail } from "../utils/emailClient";
 
-const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5000";
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173";
 
 // Registro
 export const register = async (req: Request, res: Response) => {
