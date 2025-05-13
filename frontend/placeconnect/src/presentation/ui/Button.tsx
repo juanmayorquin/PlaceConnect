@@ -1,6 +1,6 @@
 interface ButtonProps {
   children: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'outline';
+  variant?: 'primary' | 'secondary' | 'contrast' | 'outline';
   size?: 'sm' | 'md' | 'lg';
   className?: string;
   onClick?: () => void;
@@ -26,6 +26,7 @@ const Button: React.FC<ButtonProps> = ({
   const variantClasses = {
     primary: 'bg-teal-500 text-white hover:bg-teal-600 focus:ring-2 focus:ring-teal-300 focus:outline-none',
     secondary: 'bg-transparent border-2 border-teal-500 text-teal-500 hover:bg-black/10 focus:ring-2 focus:ring-teal-500 focus:outline-none',
+    contrast: 'bg-red-500 text-white hover:bg-red-600 focus:ring-2 focus:ring-red-300 focus:outline-none',
     outline: 'border border-slate-300 text-slate-700 hover:bg-slate-50 focus:ring-2 focus:ring-slate-200 focus:outline-none',
   };
   
