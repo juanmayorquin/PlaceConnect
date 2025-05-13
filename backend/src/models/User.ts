@@ -6,6 +6,7 @@ export interface IUser extends Document {
   password: string;
   role: "Propietario" | "Interesado";
   isVerified: boolean;
+  profileImageUrl?: string;
   verifyToken?: string;
   resetToken?: string;
   resetTokenExpiry?: Date;
@@ -21,8 +22,9 @@ const UserSchema = new Schema<IUser>(
       enum: ["Propietario", "Interesado"],
       default: "Interesado",
     },
-    isVerified: { type: Boolean, default: false },
+    profileImageUrl: { type: String }, 
     verifyToken: { type: String },
+    isVerified: { type: Boolean, default: false },
     resetToken: { type: String },
     resetTokenExpiry: { type: Date },
   },

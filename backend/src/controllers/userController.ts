@@ -14,7 +14,7 @@ export const getProfile = async (req: Request, res: Response): Promise<void> => 
 
 export const updateProfile = async (req: Request, res: Response): Promise<void> => {
   const userId = (req as any).userId;
-  const { name, email, password } = req.body;
+  const { name, email, password, profileImageUrl } = req.body;
 
   const user = await User.findById(userId);
   if (!user) {
@@ -22,9 +22,10 @@ export const updateProfile = async (req: Request, res: Response): Promise<void> 
     return;
   }
 
-  user.name = name || user.name;
-  user.email = email || user.email;
-
+  if (name) user.name = name;
+  if (email) user.email = email;
+  if (profileImageUrl) user.profileImageUrl = profileImageUrl;
+  
   if (password) {
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(password, salt);
