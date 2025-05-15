@@ -3,14 +3,14 @@ import { Mail, Trash2, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/AuthContext";
-import { uploadAvatar } from "../../infrastructure/storageService";
+import { uploadFile } from "../../infrastructure/firebaseStorageService";
 import { deleteProfile, getProfile, updateProfile } from "../../infrastructure/userService";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 
 const ProfilePage: React.FC = () => {
   const { logout, user } = useAuth();
-  const [form, setForm] = useState({ name: "", email: ""});
+  const [form, setForm] = useState({ name: "", email: "" });
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -23,8 +23,9 @@ const ProfilePage: React.FC = () => {
     setLoadingProfile(true);
     getProfile()
       .then((res) => {
+        console.log(res.data);
         const { name, email, profileImageUrl } = res.data;
-        setForm({ name, email});
+        setForm({ name, email });
         setAvatarUrl(profileImageUrl || null);
       })
       .catch(() => setError("No se pudo cargar el perfil"))
@@ -37,13 +38,17 @@ const ProfilePage: React.FC = () => {
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.[0] || !user) return;
+    setError("");
+    setMessage("");
+    setLoading(true);
     try {
-      setLoading(true);
-      const url = await uploadAvatar(e.target.files[0], user.id);
+      const file = e.target.files[0];
+      const path = `avatars/${user.id}/${Date.now()}_${file.name}`;
+      const url = await uploadFile(file, path);
       setAvatarUrl(url);
-      setMessage('Avatar subido correctamente');
-    } catch {
-      setError('Error al subir avatar');
+      setMessage("Avatar subido correctamente");
+    } catch (err: any) {
+      setError(err.message || "Error al subir avatar");
     } finally {
       setLoading(false);
     }
@@ -51,13 +56,15 @@ const ProfilePage: React.FC = () => {
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage("");
     setError("");
+    setMessage("");
     setLoading(true);
     try {
-      await updateProfile({ ...form, profileImageUrl: avatarUrl ?? undefined });
+      await updateProfile({
+        ...form,
+        profileImageUrl: avatarUrl ?? undefined,
+      });
       setMessage("Perfil actualizado correctamente");
-      setForm((prev) => ({ ...prev, password: "" }));
     } catch (err: any) {
       setError(err.response?.data?.msg || "Error al actualizar el perfil");
     } finally {
@@ -66,17 +73,16 @@ const ProfilePage: React.FC = () => {
   };
 
   const handleDelete = async () => {
-    if (window.confirm("¿Estás seguro de eliminar tu cuenta?")) {
-      setDeleting(true);
-      try {
-        await deleteProfile();
-        logout();
-        navigate("/login");
-      } catch {
-        setError("No se pudo eliminar la cuenta");
-      } finally {
-        setDeleting(false);
-      }
+    if (!window.confirm("¿Estás seguro de eliminar tu cuenta?")) return;
+    setDeleting(true);
+    try {
+      await deleteProfile();
+      logout();
+      navigate("/login");
+    } catch {
+      setError("No se pudo eliminar la cuenta");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -93,7 +99,7 @@ const ProfilePage: React.FC = () => {
           <form className="mt-8 space-y-6" onSubmit={handleUpdate}>
             <div className="flex flex-col items-center gap-4 mb-4">
               <img
-                src={avatarUrl || '/default-avatar.webp'}
+                src={avatarUrl || "/default-avatar.webp"}
                 alt="Avatar"
                 className="h-24 w-24 rounded-full object-cover border-2 border-slate-200 shadow"
               />
@@ -111,7 +117,7 @@ const ProfilePage: React.FC = () => {
               <Input
                 id="name"
                 name="name"
-                value={form.name || ""}
+                value={form.name}
                 onChange={handleChange}
                 type="text"
                 label="Nombre completo"
@@ -123,7 +129,7 @@ const ProfilePage: React.FC = () => {
               <Input
                 id="email"
                 name="email"
-                value={form.email || ""}
+                value={form.email}
                 onChange={handleChange}
                 type="email"
                 label="Correo electrónico"
@@ -135,7 +141,12 @@ const ProfilePage: React.FC = () => {
               {message && <div className="text-teal-600 text-sm text-center">{message}</div>}
               {error && <div className="text-red-500 text-sm text-center">{error}</div>}
             </div>
-            <Button type="submit" variant="primary" fullWidth disabled={loading || loadingProfile}>
+            <Button
+              type="submit"
+              variant="primary"
+              fullWidth
+              disabled={loading || loadingProfile}
+            >
               {loading ? "Guardando..." : "Guardar cambios"}
             </Button>
           </form>

@@ -7,6 +7,8 @@ export interface IUser extends Document {
   role: "Propietario" | "Interesado";
   isVerified: boolean;
   profileImageUrl?: string;
+  averageScore?: number;
+  reviewCount?: number;
   verifyToken?: string;
   resetToken?: string;
   resetTokenExpiry?: Date;
@@ -23,6 +25,8 @@ const UserSchema = new Schema<IUser>(
       default: "Interesado",
     },
     profileImageUrl: { type: String }, 
+    averageScore: { type: Number, default: 0 },
+    reviewCount: { type: Number, default: 0 },
     verifyToken: { type: String },
     isVerified: { type: Boolean, default: false },
     resetToken: { type: String },

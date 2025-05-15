@@ -3,8 +3,9 @@ import "dotenv/config";
 import express, { Application } from "express";
 import cors from "cors";
 import { connectDB } from "./config/db";
-import userRouter from "./routes/users";
 import authRouter from "./routes/auth";
+import userRouter from "./routes/users";
+import propertyRoutes from "./routes/property";
 
 const app: Application = express();
 connectDB();
@@ -18,8 +19,10 @@ app.use((req, res, next) => {
 });
 
 // // Rutas placeholder
-app.use("/api/users", userRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/users", userRouter);
+app.use('/api/properties', propertyRoutes);
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>

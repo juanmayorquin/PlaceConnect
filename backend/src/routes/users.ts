@@ -1,6 +1,7 @@
+// backend/src/routes/users.ts
 import { Router } from 'express';
-import { getProfile, updateProfile, deleteProfile } from '../controllers/userController';
 import { authenticate } from '../middlewares/auth';
+import { getProfile, updateProfile, deleteProfile } from '../controllers/userController';
 
 const router = Router();
 
