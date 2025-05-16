@@ -6,20 +6,38 @@ export const authenticate = (
   res: Response,
   next: NextFunction
 ) => {
-  const authHeader = req.header("Authorization");
-  const token = authHeader?.split(" ")[1];
-  if (!token) {
-    res.status(401).json({ msg: "No token, authorization denied" });
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith("Bearer ")) {
+    res.status(401).json({ msg: "No autorizado" });
     return;
   }
-
+  const token = authHeader.split(" ")[1];
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
+    const payload = jwt.verify(token, process.env.JWT_SECRET!) as {
       userId: string;
+      role: string;
     };
-    (req as any).userId = decoded.userId;
+    (req as any).userId = payload.userId;
+    (req as any).userRole = payload.role;
     next();
-  } catch (err) {
+  } catch {
     res.status(401).json({ msg: "Token inválido" });
+    return;
   }
+};
+
+/**
+ * authorizeAdmin: revisa que el usuario autenticado tenga rol 'Admin'
+ */
+export const authorizeAdmin = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const role = (req as any).userRole as string;
+  if (role !== "Admin") {
+    res.status(403).json({ msg: "Acceso restringido a administradores" });
+    return;
+  }
+  next();
 };
