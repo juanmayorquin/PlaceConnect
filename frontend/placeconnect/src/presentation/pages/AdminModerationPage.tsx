@@ -23,6 +23,19 @@ const AdminModerationPage: React.FC = () => {
           <div key={item._id} className="border p-4 rounded-lg">
             <h2 className="font-semibold">{item.title}</h2>
             <p className="text-sm">{item.description}</p>
+            <div className="text-xs text-slate-600 mb-1">
+              Baños: {item.bathrooms} | Habitaciones: {item.bedrooms} | Torre: {item.location?.tower} | Apartamento: {item.location?.apartment} | Área: {item.area} m²
+            </div>
+            {item.keypoints && item.keypoints.length > 0 && (
+              <div className="mb-1">
+                <span className="font-semibold">Puntos clave:</span>
+                <ul className="list-disc ml-6">
+                  {item.keypoints.map((kp: string, i: number) => (
+                    <li key={i}>{kp}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
             <div className="mt-2 space-x-2">
               <Button onClick={() => handleModerate(item._id, 'approve')}>Aprobar</Button>
               <Button variant="contrast" onClick={() => handleModerate(item._id, 'reject')}>Rechazar</Button>

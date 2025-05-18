@@ -31,15 +31,33 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
   );
   const [price, setPrice] = useState(initialData?.price?.toString() || "");
   const [type, setType] = useState<PropertyInput["type"]>(initialData?.type || "apartamento");
-  const [conditions, setConditions] = useState(
-    initialData?.conditions || ""
-  );
   const [images, setImages] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>(
     initialData?.images || []
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const keypointsOptions = [
+    "Amoblado",
+    "Pet Friendly",
+    "Incluye servicios",
+    "Cerca de transporte",
+    "Parqueadero",
+    "Balcón",
+    "Piscina",
+    "Gimnasio",
+    "Seguridad 24h",
+    "Aire acondicionado"
+  ];
+  const [keypoints, setKeypoints] = useState<string[]>(initialData?.keypoints || []);
+  const [bathrooms, setBathrooms] = useState(initialData?.bathrooms?.toString() || "1");
+  const [bedrooms, setBedrooms] = useState(initialData?.bedrooms?.toString() || "1");
+  const [location, setLocation] = useState({
+    tower: initialData?.location?.tower?.toString() || "",
+    apartment: initialData?.location?.apartment?.toString() || ""
+  });
+  const [area, setArea] = useState(initialData?.area?.toString() || "");
 
   useEffect(() => {
     if (images.length > 0) {
@@ -52,6 +70,17 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
     if (e.target.files) setImages(Array.from(e.target.files));
   };
 
+  const handleKeypointChange = (kp: string) => {
+    setKeypoints((prev) =>
+      prev.includes(kp) ? prev.filter((k) => k !== kp) : [...prev, kp]
+    );
+  };
+
+  const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setLocation((prev) => ({ ...prev, [name]: value }));
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!userId) {
@@ -60,7 +89,6 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
     }
     setError("");
     setLoading(true);
-
     try {
       let uploadedUrls: string[] = initialData?.images || [];
       if (images.length > 0) {
@@ -70,17 +98,22 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
           )
         );
       }
-
       const data: PropertyInput = {
         title,
         description,
         price: Number(price),
         type,
-        conditions,
+        keypoints,
+        bathrooms: Number(bathrooms),
+        bedrooms: Number(bedrooms),
         images: uploadedUrls,
+        location: {
+          tower: Number(location.tower),
+          apartment: Number(location.apartment)
+        },
+        area: Number(area),
         status: initialData?.status || "disponible",
       };
-
       await onSubmit(data);
     } catch (err: any) {
       setError(err.message || "Error al procesar");
@@ -131,11 +164,70 @@ const PropertyForm: React.FC<PropertyFormProps> = ({
           <option value="bodega">Bodega</option>
         </select>
       </div>
-      <Input
-        label="Condiciones adicionales"
-        value={conditions}
-        onChange={(e) => setConditions(e.target.value)}
-      />
+      <div className="mt-4">
+        <label className="block text-sm font-medium mb-1">Puntos clave</label>
+        <div className="grid grid-cols-2 gap-2">
+          {keypointsOptions.map((kp) => (
+            <label key={kp} className="flex items-center">
+              <input
+                type="checkbox"
+                checked={keypoints.includes(kp)}
+                onChange={() => handleKeypointChange(kp)}
+                className="mr-2"
+              />
+              {kp}
+            </label>
+          ))}
+        </div>
+      </div>
+      <div className="mt-4 grid grid-cols-2 gap-4">
+        <Input
+          label="Baños"
+          type="number"
+          min={0}
+          value={bathrooms}
+          onChange={(e) => setBathrooms(e.target.value)}
+          required
+        />
+        <Input
+          label="Habitaciones"
+          type="number"
+          min={0}
+          value={bedrooms}
+          onChange={(e) => setBedrooms(e.target.value)}
+          required
+        />
+      </div>
+      <div className="mt-4 grid grid-cols-2 gap-4">
+        <Input
+          label="Torre"
+          type="number"
+          name="tower"
+          min={0}
+          value={location.tower}
+          onChange={handleLocationChange}
+          required
+        />
+        <Input
+          label="Apartamento"
+          type="number"
+          name="apartment"
+          min={0}
+          value={location.apartment}
+          onChange={handleLocationChange}
+          required
+        />
+      </div>
+      <div className="mt-4">
+        <Input
+          label="Área (m²)"
+          type="number"
+          min={0}
+          value={area}
+          onChange={e => setArea(e.target.value)}
+          required
+        />
+      </div>
       <div className="mt-4">
         <label className="block text-sm font-medium mb-1">
           Imágenes (PNG/JPG, max 5MB)

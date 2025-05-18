@@ -19,9 +19,16 @@ export interface PropertyInput {
   description: string;
   price: number;
   type: "apartamento" | "casa" | "habitación" | "parqueo" | "bodega";
-  conditions?: string;
+  keypoints: string[];
+  bathrooms: number;
+  bedrooms: number;
   images: string[];
   status?: "disponible" | "pendiente" | "arrendado" | "inactivo";
+  location: {
+    tower: number;
+    apartment: number;
+  };
+  area: number;
 }
 
 // Crear un nuevo aviso enviando JSON

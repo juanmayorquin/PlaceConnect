@@ -37,6 +37,21 @@ const MyPropertiesPage: React.FC = () => {
             <div>
               <h2 className="font-semibold">{p.title}</h2>
               <p className="text-sm text-slate-600">${p.price}</p>
+              <div className="text-xs text-slate-600 mb-1">
+                Baños: {p.bathrooms} | Habitaciones: {p.bedrooms} | Torre:{" "}
+                {p.location?.tower} | Apartamento: {p.location?.apartment} | Área:{" "}
+                {p.area} m²
+              </div>
+              {p.keypoints && p.keypoints.length > 0 && (
+                <div className="mb-1">
+                  <span className="font-semibold">Puntos clave:</span>
+                  <ul className="list-disc ml-6">
+                    {p.keypoints.map((kp: string, i: number) => (
+                      <li key={i}>{kp}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
             <div className="space-x-2">
               <Link to={`/properties/${p._id}/edit`} className="text-blue-600">

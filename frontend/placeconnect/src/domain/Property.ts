@@ -5,9 +5,16 @@ export interface Property {
   description: string;
   price: number;
   type: "apartamento" | "casa" | "habitación" | "parqueo" | "bodega";
-  conditions?: string;
+  keypoints: string[];
+  bathrooms: number;
+  bedrooms: number;
   images: string[];
   status: "disponible" | "pendiente" | "arrendado" | "inactivo";
   createdAt: string;
   updatedAt: string;
+  location: {
+    tower: number;
+    apartment: number;
+  };
+  area: number;
 }

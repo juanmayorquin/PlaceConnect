@@ -24,8 +24,8 @@ app.use((req, res, next) => {
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/properties", propertyRoutes);
+app.use('/api/search/properties', searchRoutes);
 app.use("/api/reports", reportRoutes);
-app.use("/api/properties", searchRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
