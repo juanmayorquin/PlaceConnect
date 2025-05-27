@@ -12,6 +12,10 @@ import AdminRoute from "./AdminRoute";
 import PrivateRoute from "./PrivateRoute";
 import LoginPage from "../presentation/pages/LoginPage";
 import RegisterPage from "../presentation/pages/RegisterPage";
+import NotificationsPage from "../presentation/pages/NotificationsPage";
+import ConversationPage from "../presentation/pages/ConversationPage";
+import ConversationListPage from "../presentation/pages/ConversationListPage";
+import VerificationPage from "../presentation/pages/VerificationPage";
 
 const AppRoutes: React.FC = () => (
   <BrowserRouter>
@@ -21,11 +25,16 @@ const AppRoutes: React.FC = () => (
       <Route path="/search" element={<SearchPage />} />
       <Route path="/properties" element={<SearchPage />} />
       <Route path="/properties/:id" element={<PropertyDetailPage />} />
-  
+
       {/* Auth routes */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
-  
+
+      {/* Verification & Password reset */}
+      <Route path="/verify/:token" element={<VerificationPage />} />
+      {/* <Route path="/request-reset" element={<RequestResetPage />} /> */}
+      {/* <Route path="/reset/:token" element={<ResetPasswordPage />} /> */}
+
       {/* Protected routes */}
       <Route
         path="/profile"
@@ -59,7 +68,32 @@ const AppRoutes: React.FC = () => (
           </PrivateRoute>
         }
       />
-  
+
+      <Route
+        path="/conversations"
+        element={
+          <PrivateRoute>
+            <ConversationListPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/conversations/:otherId/:propertyId"
+        element={
+          <PrivateRoute>
+            <ConversationPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/notifications"
+        element={
+          <PrivateRoute>
+            <NotificationsPage />
+          </PrivateRoute>
+        }
+      />
+
       {/* Admin routes */}
       <Route
         path="/admin/moderation"

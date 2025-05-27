@@ -9,6 +9,6 @@ import {
 const router = Router();
 router.post("/", authenticate, sendMessage);
 router.get("/conversations", authenticate, getConversations);
-router.get("/:otherId", authenticate, getMessages);
+router.get("/:otherId/:propertyId", authenticate, getMessages);
 
 export default router;
