@@ -17,7 +17,7 @@ const PropertyDetailPage: React.FC = () => {
   const [reason, setReason] = useState("");
   const [comment, setComment] = useState("");
   const load = async () => setProp((await getPropDetail(id!)).data);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     load();
   }, [id]);
@@ -59,6 +59,7 @@ const PropertyDetailPage: React.FC = () => {
         <span>Torre: {prop.location?.tower}</span>
         <span>Apartamento: {prop.location?.apartment}</span>
         <span>Área: {prop.area} m²</span>
+        <p>Calificación promedio: {prop.averageRating?.toFixed(1) || 'N/A'}</p>
       </div>
       {prop.keypoints && prop.keypoints.length > 0 && (
         <div className="mb-2">

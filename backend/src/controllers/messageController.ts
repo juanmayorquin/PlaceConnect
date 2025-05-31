@@ -20,7 +20,7 @@ export const sendMessage = async (req: Request, res: Response) => {
     content,
   });
   // Crear notificación para receiver
-  await Notification.create({ userId: receiverId, messageId: msg._id });
+  await Notification.create({ userId: receiverId, type: "message", messageId: msg._id });
   res.status(201).json(msg);
 };
 

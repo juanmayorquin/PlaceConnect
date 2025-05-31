@@ -113,6 +113,7 @@ const ProfilePage: React.FC = () => {
                 />
               </label>
             </div>
+            {user && <p>Calificación promedio como inquilino: {user.averageScore || 'N/A'}</p>}
             <div className="space-y-4">
               <Input
                 id="name"

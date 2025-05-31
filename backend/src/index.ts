@@ -10,6 +10,8 @@ import reportRoutes from "./routes/reports";
 import searchRoutes from "./routes/search";
 import messageRoutes from "./routes/messages";
 import notificationRoutes from "./routes/notifications";
+import agreementsRoutes from "./routes/agreements";
+import reviewsRoutes from "./routes/reviews";
 
 const app: Application = express();
 connectDB();
@@ -30,6 +32,9 @@ app.use('/api/search/properties', searchRoutes);
 app.use("/api/reports", reportRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/agreements', agreementsRoutes);
+app.use('/api/reviews', reviewsRoutes);
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>

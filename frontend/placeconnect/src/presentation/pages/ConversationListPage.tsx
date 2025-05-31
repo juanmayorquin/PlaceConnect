@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { getConversations } from "../../infrastructure/messageService";
 import { Link } from "react-router-dom";
@@ -13,14 +14,26 @@ const ConversationListPage: React.FC = () => {
   const [convs, setConvs] = useState<ConvItem[]>([]);
 
   useEffect(() => {
-    getConversations().then(res => setConvs(res.data));
+    getConversations().then((res) =>
+      setConvs(
+        res.data.map(
+          (c: any) =>
+            ({
+              otherId: c.otherId,
+              propertyId: c.propertyId,
+              name: c.otherName,
+              email: c.otherEmail,
+            } as ConvItem)
+        )
+      )
+    );
   }, []);
 
   return (
     <div className="p-6">
       <h1 className="text-xl font-bold mb-4">Conversaciones</h1>
       <ul className="space-y-2">
-        {convs.map(c => (
+        {convs.map((c) => (
           <li key={`${c.otherId}_${c.propertyId}`}>
             <Link
               to={`/conversations/${c.otherId}/${c.propertyId}`}

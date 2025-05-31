@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { login as loginAPI } from "../../infrastructure/authService";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Restaurar useNavigate
 import { ArrowLeft, Lock, Mail } from "lucide-react";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
@@ -21,8 +21,8 @@ const initialForm: LoginForm = {
 const LoginPage: React.FC = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const {login} = useAuth();
-  const nav = useNavigate();
+  const { login } = useAuth(); // Quitar setShowRegisterModal y setShowLoginModal
+  const nav = useNavigate(); // Restaurar nav
 
   const {
     register: registerInput,
@@ -37,9 +37,9 @@ const LoginPage: React.FC = () => {
     setError("");
     setLoading(true);
     try {
-      const {data} = await loginAPI({ email: loginData.email, password: loginData.password });
+      const { data } = await loginAPI({ email: loginData.email, password: loginData.password });
       login(data.token, data.user);
-      nav("/");
+      nav("/"); // Restaurar navegación a la página de inicio
     } catch (err: any) {
       setError(err.response?.data?.msg || "Error al iniciar sesión");
     } finally {
@@ -48,6 +48,7 @@ const LoginPage: React.FC = () => {
   };
 
   return (
+    // Restaurar clases de layout de página completa
     <div className="min-h-screen bg-slate-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-soft">
         <div className="text-center flex flex-col gap-4">
@@ -100,25 +101,24 @@ const LoginPage: React.FC = () => {
             >
               {loading ? "Ingresando..." : "Ingresar"}
             </Button>
-            <div className="flex justify-center items-center space-x-2 text-sm mt-2">
-              <span className="text-slate-600">¿No tienes cuenta?</span>
-              <Link
-                to="/register"
-                className="text-teal-600 hover:underline font-medium"
+            <p className="text-sm text-center text-slate-600">
+              ¿No tienes cuenta?{" "}
+              <Link // Cambiar button por Link
+                to="/register" // Enlazar a la página de registro
+                className="font-medium text-teal-600 hover:text-teal-500"
               >
                 Regístrate
               </Link>
-            </div>
-            <div className="flex justify-center items-center space-x-2 text-sm mt-2">
-              <Link
-                to="/"
-                className="flex items-center text-slate-600 hover:text-primary-500 transition-colors"
-              >
-                <ArrowLeft size={16} className="mr-1" />
-                Volver al inicio
-              </Link>
-            </div>
+            </p>
           </div>
+          <Link
+            to="/"
+            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-slate-700 bg-slate-100 hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 mt-4"
+            // Quitar onClick para cerrar modal
+          >
+            <ArrowLeft className="mr-2 h-5 w-5" />
+            Volver al inicio
+          </Link>
         </form>
       </div>
     </div>

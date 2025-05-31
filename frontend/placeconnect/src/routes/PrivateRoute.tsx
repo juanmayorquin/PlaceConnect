@@ -11,7 +11,11 @@ const PrivateRoute: React.FC<Props> = ({ children }) => {
 
   if (loading) return <p>Cargando...</p>;
 
-  return user ? children : <Navigate to="/login" />;
+  if (!user) {
+    return <Navigate to="/" />; // Redirigir a la página de inicio o a la que estabas
+  }
+
+  return children;
 };
 
 export default PrivateRoute;

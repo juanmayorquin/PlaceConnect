@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { register } from "../../infrastructure/authService";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Restaurar useNavigate
 import { ArrowLeft, Lock, Mail, MousePointerClick, User } from "lucide-react";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
@@ -36,7 +36,7 @@ const RegisterPage: React.FC = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-  const nav = useNavigate();
+  const nav = useNavigate(); // Restaurar nav
 
   const {
     register: registerInput,
@@ -44,7 +44,6 @@ const RegisterPage: React.FC = () => {
     watch,
     formState: { errors },
     setValue,
-    getValues
   } = useForm<UserForm>({
     defaultValues: initialForm,
     mode: "onTouched"
@@ -76,13 +75,14 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
+    // Restaurar clases de layout de página completa
     <div className="min-h-screen bg-slate-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-soft">
         {success ? (
           <div className="flex flex-col items-center gap-6 text-center">
             <h2 className="text-2xl font-bold text-teal-600">¡Cuenta registrada exitosamente!</h2>
             <p className="text-slate-700">Revisa tu bandeja de entrada para confirmar tu cuenta.</p>
-            <Button onClick={() => nav("/")}>Volver al inicio</Button>
+            <Button onClick={() => nav("/")}>Volver al inicio</Button> // Navegar al inicio
           </div>
         ) : (
           <>
@@ -101,152 +101,153 @@ const RegisterPage: React.FC = () => {
                       index <= step ? "text-white bg-teal-400" : "text-slate-400"
                     }`}
                   >
-                    <s.icon size={24} />
+                    <s.icon className="h-5 w-5" />
                   </div>
                 ))}
               </div>
             </div>
-            <form
-              className="mt-8 space-y-6"
-              onSubmit={
-                step === steps.length - 1
-                  ? handleSubmit(onSubmit)
-                  : (e) => {
-                      e.preventDefault();
-                      nextStep();
-                    }
-              }
-            >
-              <div className="space-y-4">
-                {step === 0 && (
-                  <>
-                    <Input
-                      id="name"
-                      {...registerInput("name", { required: "El nombre es obligatorio" })}
-                      type="text"
-                      label="Nombre completo"
-                      placeholder="John Doe"
-                      icon={<User className="h-5 w-5 text-slate-400" />}
-                    />
-                    {errors.name && <span className="text-red-500 text-xs">{errors.name.message}</span>}
-                    <Input
-                      id="email"
-                      {...registerInput("email", {
-                        required: "El correo es obligatorio",
-                        pattern: {
-                          value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                          message: "Correo inválido"
-                        }
-                      })}
-                      type="email"
-                      autoComplete="email"
-                      label="Correo electrónico"
-                      placeholder="you@example.com"
-                      icon={<Mail className="h-5 w-5 text-slate-400" />}
-                    />
-                    {errors.email && <span className="text-red-500 text-xs">{errors.email.message}</span>}
-                  </>
-                )}
-                {step === 1 && (
-                  <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                      Selecciona tu rol
-                    </label>
-                    <div className="flex gap-4">
-                      {[
-                        {
-                          value: "Interesado",
-                          title: "Interesado",
-                          desc: "Busca y encuentra propiedades de tu interés."
-                        },
-                        {
-                          value: "Propietario",
-                          title: "Propietario",
-                          desc: "Publica y gestiona tus propiedades fácilmente."
-                        }
-                      ].map((role) => (
-                        <label
-                          key={role.value}
-                          htmlFor={role.value}
-                          className={`cursor-pointer flex-1 border rounded-xl p-4 transition-all shadow-sm flex flex-col items-start gap-1
-                            ${watch("role") === role.value ? "border-teal-500 bg-teal-50" : "border-slate-200 bg-white"}
-                          `}
-                        >
-                          <input
-                            type="radio"
-                            id={role.value}
-                            value={role.value}
-                            {...registerInput("role", { required: true })}
-                            checked={watch("role") === role.value}
-                            onChange={() => setValue("role", role.value as UserRole)}
-                            className="sr-only"
-                          />
-                          <span className="font-semibold text-slate-800">{role.title}</span>
-                          <span className="text-xs text-slate-500">{role.desc}</span>
-                        </label>
-                      ))}
-                    </div>
+
+            <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+              {step === 0 && (
+                <div className="space-y-4">
+                  <Input
+                    id="name"
+                    {...registerInput("name", {
+                      required: "El nombre es obligatorio",
+                    })}
+                    label="Nombre completo"
+                    placeholder="Tu nombre"
+                    icon={<User className="h-5 w-5 text-slate-400" />}
+                  />
+                  {errors.name && (
+                    <span className="text-red-500 text-xs">
+                      {errors.name.message}
+                    </span>
+                  )}
+                  <Input
+                    id="email"
+                    {...registerInput("email", {
+                      required: "El correo es obligatorio",
+                      pattern: {
+                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                        message: "Correo inválido",
+                      },
+                    })}
+                    type="email"
+                    autoComplete="email"
+                    label="Correo electrónico"
+                    placeholder="you@example.com"
+                    icon={<Mail className="h-5 w-5 text-slate-400" />}
+                  />
+                  {errors.email && (
+                    <span className="text-red-500 text-xs">
+                      {errors.email.message}
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {step === 1 && (
+                <div className="space-y-4">
+                  <p className="text-slate-700">¿Cómo usarás PlaceConnect?</p>
+                  <div className="flex gap-4">
+                    {(['Interesado', 'Propietario'] as UserRole[]).map((roleOption) => (
+                      <Button
+                        key={roleOption}
+                        type="button"
+                        variant={watch("role") === roleOption ? "primary" : "outline"}
+                        onClick={() => setValue("role", roleOption)}
+                        fullWidth
+                      >
+                        {roleOption}
+                      </Button>
+                    ))}
                   </div>
-                )}
-                {step === 2 && (
-                  <>
-                    <Input
-                      id="password"
-                      {...registerInput("password", {
-                        required: "La contraseña es obligatoria",
-                        minLength: { value: 8, message: "Mínimo 8 caracteres" },
-                        validate: {
-                          hasUpper: v => /[A-Z]/.test(v) || "Debe tener al menos una mayúscula",
-                          hasNumber: v => /[0-9]/.test(v) || "Debe tener al menos un número",
-                          hasSpecial: v => /[^A-Za-z0-9]/.test(v) || "Debe tener un caracter especial"
-                        }
-                      })}
-                      type="password"
-                      label="Contraseña"
-                      placeholder="••••••••"
-                      icon={<Lock className="h-5 w-5 text-slate-400" />}
-                    />
-                    {errors.password && <span className="text-red-500 text-xs">{errors.password.message}</span>}
-                    <Input
-                      id="confirmPassword"
-                      {...registerInput("confirmPassword", {
-                        required: "Confirma tu contraseña",
-                        validate: v => v === getValues("password") || "Las contraseñas no coinciden"
-                      })}
-                      type="password"
-                      label="Confirmar contraseña"
-                      placeholder="••••••••"
-                      icon={<Lock className="h-5 w-5 text-slate-400" />}
-                    />
-                    {errors.confirmPassword && <span className="text-red-500 text-xs">{errors.confirmPassword.message}</span>}
-                  </>
-                )}
-                {error && <div className="text-red-500 text-sm">{error}</div>}
-              </div>
-              <div className="flex justify-between">
-                {step > 0 && (
-                  <Button type="button" variant="secondary" onClick={prevStep} disabled={loading}>
-                    Atrás
-                  </Button>
-                )}
-                {step < steps.length - 1 && (
-                  <Button type="submit" variant="primary" disabled={loading}>
-                    {loading ? "Cargando..." : "Siguiente"}
-                  </Button>
-                )}
-                {step === steps.length - 1 && (
-                  <Button type="submit" variant="primary" disabled={loading}>
-                    {loading ? "Creando cuenta..." : "Crear cuenta"}
-                  </Button>
-                )}
-              </div>
-              <div className="flex justify-center items-center space-x-2 text-sm mt-4">
+                </div>
+              )}
+
+              {step === 2 && (
+                <div className="space-y-4">
+                  <Input
+                    id="password"
+                    {...registerInput("password", {
+                      required: "La contraseña es obligatoria",
+                      minLength: {
+                        value: 6,
+                        message: "Mínimo 6 caracteres",
+                      },
+                    })}
+                    type="password"
+                    label="Contraseña"
+                    placeholder="••••••••"
+                    icon={<Lock className="h-5 w-5 text-slate-400" />}
+                  />
+                  {errors.password && (
+                    <span className="text-red-500 text-xs">
+                      {errors.password.message}
+                    </span>
+                  )}
+                  <Input
+                    id="confirmPassword"
+                    {...registerInput("confirmPassword", {
+                      required: "Confirma tu contraseña",
+                      validate: (value) =>
+                        value === watch("password") || "Las contraseñas no coinciden",
+                    })}
+                    type="password"
+                    label="Confirmar contraseña"
+                    placeholder="••••••••"
+                    icon={<Lock className="h-5 w-5 text-slate-400" />}
+                  />
+                  {errors.confirmPassword && (
+                    <span className="text-red-500 text-xs">
+                      {errors.confirmPassword.message}
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {error && <div className="text-red-500 text-sm">{error}</div>}
+
+              <div className="flex flex-col gap-2 pt-4">
+                <div className="flex justify-between">
+                  {step > 0 && (
+                    <Button type="button" onClick={prevStep} variant="secondary">
+                      Anterior
+                    </Button>
+                  )}
+                  {step < steps.length - 1 && (
+                    <Button type="button" onClick={nextStep} variant="primary" className={step === 0 ? "ml-auto" : ""}>
+                      Siguiente
+                    </Button>
+                  )}
+                  {step === steps.length - 1 && (
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      disabled={loading}
+                      className="ml-auto"
+                    >
+                      {loading ? "Registrando..." : "Finalizar registro"}
+                    </Button>
+                  )}
+                </div>
+                <p className="text-sm text-center text-slate-600 mt-4">
+                  ¿Ya tienes cuenta?{" "}
+                  <Link // Cambiar button por Link
+                    to="/login" // Enlazar a la página de login
+                    className="font-medium text-teal-600 hover:text-teal-500"
+                  >
+                    Inicia sesión
+                  </Link>
+                </p>
                 <Link
-                  to="/login"
-                  className="flex items-center text-slate-600 hover:text-primary-500 transition-colors"
+                  to="/"
+                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-slate-700 bg-slate-100 hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 mt-2"
+                  // Quitar onClick para cerrar modal
                 >
-                  <ArrowLeft size={16} className="mr-1" />
-                  Volver a inicio de sesión
+                  <ArrowLeft className="mr-2 h-5 w-5" />
+                  Volver al inicio
                 </Link>
               </div>
             </form>
@@ -256,4 +257,5 @@ const RegisterPage: React.FC = () => {
     </div>
   );
 };
+
 export default RegisterPage;
